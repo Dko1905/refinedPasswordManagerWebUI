@@ -1,0 +1,23 @@
+{
+ "name": "rpm-ui",
+ "version": "1.0.0",
+ "repository": "https://github.com/Dko1905/refinedPasswordManagerWebUI.git",
+ "author": "Daniel Florescu <Daniel.florescu1905@protonmail.ch>",
+ "license": "ISC",
+ "devDependencies": {
+  "@rollup/plugin-commonjs": "^15.1.0",
+  "@rollup/plugin-node-resolve": "^9.0.0",
+  "npm-run-all": "^4.1.5",
+  "rollup": "^2.31.0",
+  "rollup-plugin-terser": "^7.0.2",
+  "rollup-plugin-typescript2": "^0.27.3",
+  "serve": "^11.3.2",
+  "typescript": "^4.0.3"
+ },
+ "scripts": {
+  "build": "rollup -c",
+  "watch": "rollup -c -w",
+  "dev": "npm-run-all --parallel start watch",
+  "start": "serve dist"
+ }
+}
