@@ -1,0 +1,11 @@
+# PMs
+yarn.lock
+package.lock
+node_modules/
+
+# Svelte
+dist/build/
+
+# Mac
+.DS_Store
+yarn-error.log
