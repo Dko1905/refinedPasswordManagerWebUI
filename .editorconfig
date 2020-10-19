@@ -1,0 +1,20 @@
+root = true
+
+[.{gitignore, editorconfig}]
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.html]
+indent_style = tab
+indent_size = 2
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = false
+
+[*.{css, js}]
+indent_style = tab
+indent_size = 2
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
