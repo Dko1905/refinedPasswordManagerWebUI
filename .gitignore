@@ -1,9 +1,0 @@
-# Rollup
-dist/bundle.js
-dist/bundle.js.map
-
-# PMs
-yarn.lock
-*.log
-
-node_modules
