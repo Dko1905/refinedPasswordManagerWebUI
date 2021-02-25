@@ -9,7 +9,7 @@
 	import { getNotificationsContext } from 'svelte-notifications';
 
   const { addNotification } = getNotificationsContext();
-	
+
 	export let token: Token
 	export let enpassword: string
 	export let refreshToken: () => Promise<Token>
@@ -40,7 +40,7 @@
 			} else{
 				console.warn(`ShowError: ${e}: ${e2.message != null ? e2.message : e2.toString()}`)
 			}
-			
+
 			error = e.toString()
 			addNotification({
 				text: `Caught Error: ${e}: ${e2.message != null ? e2.message : e2.toString()}`,

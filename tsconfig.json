@@ -3,7 +3,8 @@
 	"compilerOptions": {
 		"noImplicitAny": true,
 		"removeComments": true,
-		"sourceMap": true
+		"sourceMap": true,
+		"allowSyntheticDefaultImports": true
 	},
   "include": ["src/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"]

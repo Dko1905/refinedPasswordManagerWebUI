@@ -40,7 +40,7 @@
 	const check = (e: Event) => {
 		const elm: HTMLInputElement = e.target as HTMLInputElement
 		const value: string = elm.value
-		
+
 		if(value === "" && elm.id !== "fenpassword"){
 			elm.style.borderColor = "red"
 		} else {
