@@ -24,10 +24,12 @@
 	}
 
 	let credentials: Promise<Credential[]> = Promise.reject('')
-
+	let showFileUpload = false
+	let fileInputElm: HTMLInputElement
 	let error: string = 'No current error';
+
 	const showError = (e: string, e2: any) => {
-		e = e.toString() // Just do it
+		e = e?.toString() // Just do it
 		if(e == null || e == undefined){
 			console.error('showError got null, FIX THIS!!! (1)')
 			error = 'showError got null, FIX THIS!!! (1)'
@@ -44,7 +46,7 @@
 			error = e.toString()
 			addNotification({
 				text: `Caught Error: ${e}: ${e2.message != null ? e2.message : e2.toString()}`,
-				position: 'top-right',
+				position: 'bottom-right',
 				type: 'danger',
 				removeAfter: 4000
 			})
@@ -57,7 +59,7 @@
 			console.info(`showInfo: ${i.toString()}`)
 			addNotification({
 				text: `Info: ${i.toString()}`,
-				position: 'top-right',
+				position: 'bottom-right',
 				type: notificationType,
 				removeAfter: 3000
 			})
@@ -133,13 +135,15 @@
 			}
 		}
 	}
-	const repCredential = (e: Event, nu: number): void => {
-		try{
-			invalidateButtons((e.target as any).parentElement.parentElement)
-		} catch(e){
-			showError('invalidateButtons', e)
+	const repCredential = (e: Event, nu: number): Promise<void> => {
+		if (e) {
+			try{
+				invalidateButtons((e.target as any).parentElement.parentElement)
+			} catch(e){
+				showError('invalidateButtons', e)
+			}
 		}
-		refresh().then(() => {
+		return refresh().then(() => {
 			credentials.then(credentials => {
 				let cred = credentials[nu]
 				if(cred == null || cred == undefined){
@@ -164,10 +168,10 @@
 							} else{
 								showInfo(`Successfully saved credential`)
 							}
-							validateButtons((e.target as any).parentElement.parentElement)
+							if (e != undefined) validateButtons((e.target as any).parentElement.parentElement)
 						})
 						.catch(e2 => {
-							validateButtons((e.target as any).parentElement.parentElement)
+							if (e != undefined)	validateButtons((e.target as any).parentElement.parentElement)
 							showError('repCredential', e2)
 						})
 				}
@@ -205,13 +209,13 @@
 			})
 		})
 	}
-	const add = () => {
-		refresh().then(() => {
-			credentials.then(credentials2 => {
+	const add = (): Promise<void> => {
+		return refresh().then(async () => {
+			await credentials.then(credentials2 => {
 				credentials2.push(new Credential(0, token.accountId, '', '', '', ''))
 				credentials = Promise.resolve(credentials2)
 			})
-			credentials.then(credentials => {
+			await credentials.then(async credentials => {
 				let cred = credentials[credentials.length - 1]
 				let cred2: Credential
 				try{
@@ -227,7 +231,7 @@
 					showError('add', e)
 					return
 				}
-				addCredential(token, cred2)
+				await addCredential(token, cred2)
 					.then(result => {
 						if((result as SpringError).timestamp != null){
 							showError('add', result)
@@ -241,16 +245,72 @@
 					})
 			})
 		})
-		
 	}
-		
+	const download = () => {
+		credentials.then(accounts => {
+			let elm = document.createElement('a')
+			const json = accounts.map(cred => ({website: cred.website, username: cred.username, password: cred.password, extra: cred.extra}))
+			elm.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(JSON.stringify(json))
+			elm.setAttribute('download', 'accounts.json')
+			elm.style.display = 'none'
+			document.body.appendChild(elm)
+			elm.click()
+			document.body.removeChild(elm)
+		})
+	}
+	const upload = () => {
+		showFileUpload = true
+		setTimeout(() => {
+			fileInputElm.addEventListener('change', (ev: Event) => {
+				const files: FileList = (ev.target as any).files
+				if (files.length < 1) {
+					showError('No files selected', '')
+					return
+				}
+				const file = files[0]
+				file.text().then(async text => {
+					console.log(text)
+					try {
+						const json: {website: string, username: string, password: string, extra: string}[] = JSON.parse(text)
+						for (const cred of json) {
+							await add();
+							const accounts = await credentials
+							// Combine the two objects, and overide using new object
+							accounts[accounts.length - 1].website = cred.website
+							accounts[accounts.length - 1].username = cred.username
+							accounts[accounts.length - 1].password = cred.password
+							accounts[accounts.length - 1].extra = cred.extra
+							await repCredential(undefined, accounts.length - 1)
+							credentials = Promise.resolve(accounts)
+						}
+					} catch (e) {
+						showError('Parse file', e)
+					}
+				}).catch(e => {
+					showError('file.read()', e)
+				}).finally(() => {
+					showFileUpload = false
+				})
+			})
+		}, 100)
+	}
+
 	onMount(getCredentials)
 </script>
 
+<!-- svelte-ignore empty-block -->
 <main>
 	<div id='buttonBox'>
 		<button id='logout' on:click={logout}>Logout</button>
 		<button id='refresh' on:click={getCredentials}>Refresh</button>
+		{#await credentials}
+		{:then}
+		<button id='download' on:click={download}>Save</button>
+		<button id='upload' on:click={upload}>Upload (will override all data)</button>
+		{#if showFileUpload}
+		<input type="file" bind:this={fileInputElm} />
+		{/if}
+		{/await}
 	</div>
 	{#await credentials}
 	<h2>Loading...</h2>
@@ -307,6 +367,18 @@
 		border: none;
 		background-color: green;
 		border: solid thin green;
+		color: white;
+	}
+	#download {
+		border: none;
+		background-color: green;
+		border: solid thin green;
+		color: white;
+	}
+	#upload {
+		border: none;
+		background-color: darkred;
+		border: solid thin darkred;
 		color: white;
 	}
 	#add {

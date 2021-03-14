@@ -54,7 +54,7 @@ const putCredential = (token: Token, credential: Credential): Promise<null | Spr
 		.then(res => res.text())
 		.then(text => text === '' ? Promise.resolve(null) : Promise.resolve(JSON.parse(text)))
 const deleteCredential = (token: Token, credentialId: number): Promise<null | SpringError> =>
-	fetch(credentialsUrl + `/${credentialId}`, {
+	fetch(credentialsUrl() + `/${credentialId}`, {
 		headers: new Headers({
 			'X-Auth-Token': JSON.stringify(token)
 		}),
