@@ -10,14 +10,14 @@ const base64 = {
 
 // Auth
 const authenticate = (username: string, password: string): Promise<Token | SpringError> => 
-	fetch(authenticateUrl, {
+	fetch(authenticateUrl(), {
 		headers: new Headers({
 			'Authorization': `Basic ${base64.encode(`${username}:${password}`)}`
 		})
 	})
 		.then(res => res.json())
 const getAccount = (token: Token): Promise<Account[] | SpringError> =>
-	fetch(accountsUrl, {
+	fetch(accountsUrl(), {
 		headers: new Headers({
 			'X-Auth-Token': JSON.stringify(token)
 		})
@@ -26,14 +26,14 @@ const getAccount = (token: Token): Promise<Account[] | SpringError> =>
 export { authenticate, getAccount }
 // Credential
 const getCredential = (token: Token): Promise<Credential[] | SpringError> =>
-	fetch(credentialsUrl, {
+	fetch(credentialsUrl(), {
 		headers: new Headers({
 			'X-Auth-Token': JSON.stringify(token)
 		})
 	})
 		.then(res => res.json())
 const addCredential = (token: Token, credential: Credential): Promise<number | SpringError> =>
-	fetch(credentialsUrl, {
+	fetch(credentialsUrl(), {
 		headers: new Headers({
 			'X-Auth-Token': JSON.stringify(token),
 			'Content-Type': 'application/json'
@@ -43,7 +43,7 @@ const addCredential = (token: Token, credential: Credential): Promise<number | S
 	})
 		.then(res => res.json())
 const putCredential = (token: Token, credential: Credential): Promise<null | SpringError> =>
-	fetch(credentialsUrl, {
+	fetch(credentialsUrl(), {
 		headers: new Headers({
 			'X-Auth-Token': JSON.stringify(token),
 			'Content-Type': 'application/json'

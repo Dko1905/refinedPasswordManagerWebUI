@@ -6,6 +6,7 @@
 	import Home from './Home.svelte'
 
 	import { authenticate } from './req'
+	import { setBaseUrl } from './url'
 	import type Token from './domain/token'
 	import type SpringError from './domain/error/springError'
 
@@ -14,6 +15,7 @@
 	let state: Promise<Token> = Promise.reject('')
 	// Infomation about user
 	let localStorage: Storage | null = window.localStorage
+	let apiVersion: string
 	let username: string
 	let password: string
 	let enpassword: string
@@ -21,6 +23,7 @@
 
 	const login = (e: CustomEvent) => {
 		loggedIn = true
+		apiVersion = e.detail.apiVersion
 		username = e.detail.username
 		password = e.detail.password
 		enpassword = e.detail.enpassword
@@ -30,12 +33,15 @@
 			if(storage == null){
 				console.warn('Local storage not available!')
 			} else{
+				storage.setItem('apiVersion', apiVersion)
 				storage.setItem('username', username)
 				storage.setItem('password', password)
 				storage.setItem('enpassword', enpassword)
 				storage.setItem('savetolocal', savetolocal ? '1' : '0')
 			}
 		}
+		/* API VERSION SWITCH */
+		setBaseUrl(apiVersion)
 		state = new Promise((resolve, reject) => {
 			authenticate(username, password)
 				.then(b => {
@@ -81,6 +87,7 @@
 		if(localStorage == null){
 			console.warn('Local storage not available!')
 		} else{
+			apiVersion = localStorage.getItem('apiVersion')
 			username = localStorage.getItem('username')
 			password = localStorage.getItem('password')
 			enpassword = localStorage.getItem('enpassword')
@@ -92,8 +99,11 @@
 				enpassword !== null &&
 				savetolocal !== null && savetolocal !== false
 			){
+				if (!apiVersion) {
+					apiVersion = 'v2'
+				}
 				if(loginComp != null){
-					loginComp.setValues(username, password, enpassword, savetolocal)
+					loginComp.setValues(apiVersion, username, password, enpassword, savetolocal)
 				} else{
 					console.warn('loginComp was null')
 				}

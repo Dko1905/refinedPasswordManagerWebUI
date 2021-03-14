@@ -2,6 +2,7 @@
 	import { createEventDispatcher, onMount } from 'svelte'
 	const dispatch = createEventDispatcher()
 
+	let apiVersion: string
 	let fusername: HTMLInputElement
 	let fpassword: HTMLInputElement
 	let fenpassword: HTMLInputElement
@@ -16,8 +17,10 @@
 
 		if(username === "" || password === "")
 			return
+		console.debug(`Api version: ${apiVersion}`)
 
 		dispatch('login', {
+			apiVersion: apiVersion,
 			username: username,
 			password: password,
 			enpassword: enpassword,
@@ -25,8 +28,9 @@
 		})
 	}
 	// Outside events
-	export const setValues = (username: string, password: string, enpassword: string, savetolocal: boolean) => {
+	export const setValues = (apiVersion2: string, username: string, password: string, enpassword: string, savetolocal: boolean) => {
 		try{
+			apiVersion = apiVersion2
 			fusername.value = username
 			fpassword.value = password
 			fenpassword.value = enpassword
@@ -51,6 +55,11 @@
 
 <main id="loginFormContainer">
 	<form on:submit|preventDefault={submit} id="loginForm">
+		<label for="fapiversion">API version:</label><br/>
+		<select bind:value={apiVersion} name="fapiversion" id="fapiversion">
+			<option value="v2">V2</option>
+			<option value="v3">V3</option>
+		</select><br/>
 		<label for="fusername">Username:</label><br/>
 		<input bind:this={fusername} on:keyup={check} type="text" name="fusername" id="fusername" autocomplete="off" autocapitalize="off" autofocus/><br/>
 		<label for="fpassword">Password:</label><br/>
