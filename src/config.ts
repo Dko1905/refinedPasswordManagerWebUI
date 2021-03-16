@@ -1,4 +1,3 @@
-
 export class Config {
 	private _version: number
 	private _baseUrl: string
