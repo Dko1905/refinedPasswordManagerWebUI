@@ -1,4 +1,4 @@
-import type {Credential} from "src/entities/credential";
+import type {Credential} from 'src/entities/credential'
 
 export interface CredentialRepository {
 	/**

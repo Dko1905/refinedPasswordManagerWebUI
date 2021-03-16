@@ -1,4 +1,3 @@
-
 export class Credential {
 	constructor(
 		public readonly id: bigint | null,
