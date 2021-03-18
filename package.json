@@ -4,6 +4,7 @@
 		"build": "snowpack build"
 	},
 	"dependencies": {
+		"js-base64": "^3.6.0",
 		"svelte": "^3.24.0"
 	},
 	"devDependencies": {

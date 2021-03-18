@@ -1,6 +1,18 @@
+import type {Token} from '../entities/token'
 import type {Account} from '../entities/account'
 
 export interface AccountRepository {
+	/**
+	 * Set token callback.
+	 * @param callback Callback which returns a valid token
+	 */
+	setTokenCallback(callback: () => Promise<Token>): void
+	/**
+	 * Login, meaning that you get a token.
+	 * @param account Account to login with
+	 * @returns Valid `Token`
+	 */
+	authenticate(account: Account): Promise<Token>
 	/**
 	 * Add account to repository.
 	 * The promise will reject if any error occurs.
@@ -29,5 +41,5 @@ export interface AccountRepository {
 	 * @param id - Id of account to delete
 	 * @returns Nothing in a `Promise<void>`
 	 */
-	deleteAccount(id: bigint): Promise<void>
+	deleteAccount(id: number): Promise<void>
 }

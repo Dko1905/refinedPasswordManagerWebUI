@@ -1,6 +1,12 @@
-import type {Credential} from 'src/entities/credential'
+import type {Credential} from '../entities/credential'
+import type {Token} from '../entities/token'
 
 export interface CredentialRepository {
+	/**
+	 * Set token callback.
+	 * @param callback Callback which returns a valid token
+	 */
+	setTokenCallback(callback: () => Promise<Token>): void
 	/**
 	 * Add credential to repository.
 	 * The promise will reject if any error occurs.
@@ -17,14 +23,6 @@ export interface CredentialRepository {
 	 */
 	updateCredential(cred: Credential): Promise<void>
 	/**
-	 * Get a credential from the repository.
-	 * The promise will reject if the credential isn't found, or if any
-	 * other error occurs.
-	 * @param id - The id of the credential to get
-	 * @returns A credential wrapped in a promise.
-	 */
-	getCredential(id: bigint): Promise<Credential>
-	/**
 	 * Get all credentials from repository.
 	 * The promise will reject if any error occurs.
 	 * @returns Array of credentials wrapped in a promise.
@@ -37,5 +35,5 @@ export interface CredentialRepository {
 	 * @param id - Id of credential to delete
 	 * @returns Nothing in a `Promise<void>`
 	 */
-	deleteCredential(id: bigint): Promise<void>
+	deleteCredential(id: number): Promise<void>
 }
