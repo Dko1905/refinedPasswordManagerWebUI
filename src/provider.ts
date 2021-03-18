@@ -3,8 +3,9 @@ import type {AccountRepository} from './repository/accountRepository'
 import {AccountRepository2Impl} from './repository/accountRepository2Impl'
 import type {CredentialRepository} from './repository/credentialRepository'
 import {CredentialRepository2Impl} from './repository/credentialRepository2Impl'
+import {TokenService} from './service/tokenService'
 
-/* Simple dependency resolver that only uses singletons *and* supports circular references. */
+/* Simple dependency resolver that only uses singletons **and** supports circular references. */
 const cache: Map<string, Promise<unknown>> = new Map()
 const chelper = <T>(type: {new (): T}): Promise<T> => {
 	return new Promise((resolve) => {
@@ -28,11 +29,12 @@ const chelper = <T>(type: {new (): T}): Promise<T> => {
 export function getAccountRepository(): Promise<AccountRepository> {
 	return chelper(AccountRepository2Impl)
 }
-
 export function getCredentialRepository(): Promise<CredentialRepository> {
 	return chelper(CredentialRepository2Impl)
 }
-
 export function getConfig(): Promise<Config> {
 	return chelper(Config)
+}
+export function getTokenService(): Promise<TokenService> {
+	return chelper(TokenService)
 }

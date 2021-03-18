@@ -1,83 +1,51 @@
 <script lang="ts">
 	import {Account} from './entities/account'
 	import {Credential} from './entities/credential'
-	import {getAccountRepository, getCredentialRepository} from './provider'
+	import {
+		getAccountRepository,
+		getCredentialRepository,
+		getTokenService
+	} from './provider'
 
-	const accountRepository = getAccountRepository()
-	const credentialRepository = getCredentialRepository()
+	let click: () => void, add: () => void, del: () => void, put: () => void
+	let inputStr: string
 
-	const authAccount = new Account(null, 'example', 'example', null)
+		// Global async
+	;(async () => {
+		const aRepo = await getAccountRepository()
+		const cRepo = await getCredentialRepository()
+		const tokenService = await getTokenService()
 
-	const click = () => {
-		Promise.all([accountRepository, credentialRepository]).then(
-			([acc, cred]) => {
-				acc.authenticate(authAccount).then((token) => {
-					acc.setTokenCallback(() => Promise.resolve(token))
-					cred.setTokenCallback(() => Promise.resolve(token))
+		const account = new Account(null, 'example', 'example', null)
+		const id = await tokenService.getAccountId(account)
+		const cred = new Credential(null, id, 'google.com', '123', '123', '1')
 
-					cred.getCredentials().then(console.log)
-				})
-			}
-		)
-	}
-	const add = () => {
-		Promise.all([accountRepository, credentialRepository]).then(
-			([acc, cred]) => {
-				acc.authenticate(authAccount).then((token) => {
-					acc.setTokenCallback(() => Promise.resolve(token))
-					cred.setTokenCallback(() => Promise.resolve(token))
+		cRepo.setTokenCallback(() => tokenService.login(account))
+		aRepo.setTokenCallback(() => tokenService.login(account))
 
-					cred
-						.addCredential(
-							new Credential(null, token.accountId, 'new account', '', '', '')
-						)
-						.then(console.log)
-				})
-			}
-		)
-	}
-	let idStr: string = ''
-	const del = () => {
-		Promise.all([accountRepository, credentialRepository]).then(
-			([acc, cred]) => {
-				acc.authenticate(authAccount).then((token) => {
-					acc.setTokenCallback(() => Promise.resolve(token))
-					cred.setTokenCallback(() => Promise.resolve(token))
-
-					cred.deleteCredential(Number.parseInt(idStr)).then(console.log)
-				})
-			}
-		)
-	}
-	const put = () => {
-		Promise.all([accountRepository, credentialRepository]).then(
-			([acc, cred]) => {
-				acc.authenticate(authAccount).then((token) => {
-					acc.setTokenCallback(() => Promise.resolve(token))
-					cred.setTokenCallback(() => Promise.resolve(token))
-
-					cred
-						.updateCredential(
-							new Credential(
-								Number.parseInt(idStr),
-								token.accountId,
-								'321',
-								'321',
-								'321',
-								'ABC'
-							)
-						)
-						.then(console.log)
-				})
-			}
-		)
-	}
+		click = () => {
+			cRepo.getCredentials().then(console.log)
+		}
+		add = () => {
+			cRepo.addCredential(cred).then(console.log)
+		}
+		del = () => {
+			cRepo.deleteCredential(Number.parseInt(inputStr)).then(console.log)
+		}
+		put = () => {
+			cRepo
+				.updateCredential(
+					new Credential(Number.parseInt(inputStr), id, 'web', 'u', 'p', 'ex')
+				)
+				.then(console.log)
+		}
+	})()
 </script>
 
 <div class="App">
 	<button on:click={click}>Click me!</button>
 	<button on:click={add}>Add</button>
 	<button on:click={del}>Delete</button>
-	<input type="text" bind:value={idStr} />
+	<input type="text" bind:value={inputStr} />
 	<button on:click={put}>Update</button>
 </div>
