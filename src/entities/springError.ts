@@ -1,4 +1,3 @@
-
 export class SpringError extends Error {
 	constructor(
 		public readonly error: string,

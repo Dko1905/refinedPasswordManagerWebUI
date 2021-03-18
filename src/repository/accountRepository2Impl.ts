@@ -36,7 +36,9 @@ export class AccountRepository2Impl implements AccountRepository {
 		if (obj.hasOwnProperty('error')) {
 			throw obj as SpringError
 		} else {
-			const obj2 = <{accountId: number, uuid: string, expirationDate: number}>obj
+			const obj2 = <{accountId: number; uuid: string; expirationDate: number}>(
+				obj
+			)
 			const token = new Token(obj2.accountId, obj2.uuid, obj2.expirationDate)
 			return token
 		}
