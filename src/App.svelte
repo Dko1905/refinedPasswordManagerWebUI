@@ -1,7 +1,8 @@
 <script lang="ts">
+	import type {LoginEvent} from './entities/loginEvent';
 	import Login from './pages/Login.svelte'
 
-	const test = (e) => {
+	const test = (e: CustomEvent<LoginEvent>) => {
 		console.log(e)
 	}
 </script>

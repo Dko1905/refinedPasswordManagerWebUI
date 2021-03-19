@@ -1,7 +1,8 @@
 <script lang="ts">
 	import {createEventDispatcher} from 'svelte'
+	import {LoginEvent} from '../entities/loginEvent'
 
-	const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher<{login: LoginEvent}>();
 
 	let username: string = ''
 	let password: string = ''
@@ -9,9 +10,9 @@
 	let cache: boolean = true
 	let apiversion: string = 'v3'
 	const formSubmit = (e: Event) => {
-		dispatch('login', {
+		dispatch('login', new LoginEvent(
 			username, password, epassword, cache, apiversion
-		})
+		))
 	}
 </script>
 
