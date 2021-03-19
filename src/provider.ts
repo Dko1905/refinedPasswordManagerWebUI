@@ -3,7 +3,7 @@ import type {AccountRepository} from './repository/accountRepository'
 import {AccountRepository2Impl} from './repository/accountRepository2Impl'
 import type {CredentialRepository} from './repository/credentialRepository'
 import {CredentialRepository2Impl} from './repository/credentialRepository2Impl'
-import {LoginService} from './service/loginService'
+import {LoginCacheRepository} from './repository/loginCacheRepository'
 import {TokenService} from './service/tokenService'
 
 /* Simple dependency resolver that only uses singletons **and** supports circular references. */
@@ -33,12 +33,12 @@ export function getAccountRepository(): Promise<AccountRepository> {
 export function getCredentialRepository(): Promise<CredentialRepository> {
 	return chelper(CredentialRepository2Impl)
 }
+export function getLoginCacheRepository(): Promise<LoginCacheRepository> {
+	return chelper(LoginCacheRepository)
+}
 export function getConfig(): Promise<Config> {
 	return chelper(Config)
 }
 export function getTokenService(): Promise<TokenService> {
 	return chelper(TokenService)
-}
-export function getLoginService(): Promise<LoginService> {
-	return chelper(LoginService)
 }

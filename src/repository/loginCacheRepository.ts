@@ -1,6 +1,6 @@
 import type {Account} from '../entities/account'
 
-export class LoginService {
+export class LoginCacheRepository {
 	private _account: Account | null = null
 	private _localStorage: Storage | null
 	private _useLocalStorage: boolean = false
