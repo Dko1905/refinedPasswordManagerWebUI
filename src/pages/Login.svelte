@@ -1,33 +1,34 @@
+<!-- Login component, the component only dispatches events, it does not have any logic. -->
 <script lang="ts">
 	import {createEventDispatcher} from 'svelte'
-	import {LoginEvent} from '../entities/loginEvent'
+	import {LoginData} from '../entities/loginData'
 
-	const dispatch = createEventDispatcher<{login: LoginEvent}>();
+	const dispatch = createEventDispatcher<{login: LoginData}>()
 
-	let username: string = ''
-	let password: string = ''
-	let epassword: string = ''
-	let cache: boolean = true
-	let apiversion: string = 'v3'
+	export let ed: LoginData = new LoginData('', '', '', true, 'v3')
 	const formSubmit = (e: Event) => {
-		dispatch('login', new LoginEvent(
-			username, password, epassword, cache, apiversion
-		))
+		dispatch('login', ed)
 	}
 </script>
 
 <div id="container">
 	<form on:submit|preventDefault={formSubmit} id="form">
-		<input type="text" bind:value={username} placeholder="username" /><br />
-		<input type="text" bind:value={password} placeholder="password" /><br />
-		<input type="text" bind:value={epassword} placeholder="epassword" /><br />
+		<input type="text" bind:value={ed.username} placeholder="username" /><br />
+		<input type="text" bind:value={ed.password} placeholder="password" /><br />
+		<input type="text" bind:value={ed.epassword} placeholder="epassword" /><br
+		/>
 		<div id="checkBoxes">
 			<label for="cacheLogin">Cache session:</label>
-			<input type="checkbox" bind:checked={cache} id="cacheLogin" name="cacheLogin" />
+			<input
+				type="checkbox"
+				bind:checked={ed.cache}
+				id="cacheLogin"
+				name="cacheLogin"
+			/>
 		</div>
 		<div class="versContainer">
 			<label for="apiversion">Api version:</label>
-			<select bind:value={apiversion} name="apiversion" id="apiversion">
+			<select bind:value={ed.apiversion} name="apiversion" id="apiversion">
 				<option value="v2">v2</option>
 				<option default value="v3">v3</option>
 			</select>

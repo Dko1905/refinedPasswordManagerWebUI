@@ -14,7 +14,10 @@ export class TokenService {
 		try {
 			if (this._currentToken) {
 				// Check if token is old
-				if (this._currentToken.expirationDate - conf.tokenMinTimeLeft < (Date.now() / 1000)) {
+				if (
+					this._currentToken.expirationDate - conf.tokenMinTimeLeft <
+					Date.now() / 1000
+				) {
 					this._currentToken = await repo.authenticate(account)
 					return this._currentToken
 				} else {
