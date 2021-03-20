@@ -7,7 +7,7 @@
 
 	const ed = createEventDispatcher<{add: ListAddEvent}>()
 
-	const eventFunc = (id: number) => {
+	const eventFunc = (credential: Credential) => {
 		ed('add', new ListAddEvent())
 	}
 </script>
@@ -15,10 +15,7 @@
 <div class="app">
 	<ul>
 		{#each credentials as credential}
-			<li><p on:click={() => eventFunc(credential.id!!)}>{credential.website} : {credential.username}</p></li>
+			<li><p on:click={e => eventFunc(credential)}>{credential.website} : {credential.username}</p></li>
 		{/each}
 	</ul>
 </div>
-
-<style>
-</style>

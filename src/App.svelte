@@ -1,12 +1,22 @@
 <script lang="ts">
 	import {onMount} from 'svelte'
-	import type {LoginData} from './entities/loginData'
+	import type {Credential} from './entities/credential'
+	import type {LoginData} from './events/loginData'
 	import Login from './pages/Login.svelte'
-	import {getAccountRepository, getCredentialRepository, getState} from './provider'
+	import PList from './pages/PList.svelte'
+	import {
+		getAccountRepository,
+		getCredentialRepository,
+		getState
+	} from './provider'
 
 	let loginElm: Login
-	let loginCallback: (e: CustomEvent<LoginData>) => void;
-	let loggedIn: boolean = false
+	let pListElm: PList
+
+	let loginCallback: (e: CustomEvent<LoginData>) => void
+	let logState: 'out' | 'moving' | 'in' = 'out'
+
+	let credentials: Credential[] = []
 
 	onMount(() => {
 		Promise.all([
@@ -15,7 +25,7 @@
 			getCredentialRepository()
 		]).then(([state, accountRepository, credentialRepository]) => {
 			// Read from localstorage and use it.
-			state.getLoginData().then(ld => {
+			state.getLoginData().then((ld) => {
 				if (ld) {
 					loginElm.setLoginData(ld)
 				}
@@ -27,17 +37,25 @@
 				accountRepository.setTokenCallback(state.getTokenCallback())
 				credentialRepository.setTokenCallback(state.getTokenCallback())
 
-				credentialRepository.getCredentials().then(console.log)
+				logState = 'moving'
+				// Fetch credentials and display in list
+				credentialRepository.getCredentials().then((v) => {
+					console.log(v)
+					logState = 'in'
+					credentials = v
+				})
 			}
 		})
 	})
 </script>
 
 <div class="app">
-	{#if !loggedIn}
-	<Login bind:this={loginElm} on:login={loginCallback} />
+	{#if logState == 'out'}
+		<Login bind:this={loginElm} on:login={loginCallback} />
+	{:else if logState == 'moving'}
+		<p>Loggin in...</p>
 	{:else}
-	<p>Logged in</p>
+		<PList bind:this={pListElm} bind:credentials />
 	{/if}
 </div>
 
