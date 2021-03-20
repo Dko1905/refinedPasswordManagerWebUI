@@ -4,6 +4,6 @@ export class LoginData {
 		public password: string,
 		public epassword: string,
 		public cache: boolean,
-		public apiversion: string
+		public apiVersion: string
 	) {}
 }

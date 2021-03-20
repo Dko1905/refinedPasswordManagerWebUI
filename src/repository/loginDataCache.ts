@@ -1,4 +1,4 @@
-import type {LoginData} from '../entities/loginData'
+import type {LoginData} from '../events/loginData'
 
 export class LoginDataCache {
 	private _loginData: LoginData | null = null
@@ -34,6 +34,7 @@ export class LoginDataCache {
 	}
 	public setLoginData(loginData: LoginData) {
 		this._loginData = loginData
-		this._localStorage?.setItem('loginData', JSON.stringify(loginData))
+		if (loginData.cache)
+			this._localStorage?.setItem('loginData', JSON.stringify(loginData))
 	}
 }

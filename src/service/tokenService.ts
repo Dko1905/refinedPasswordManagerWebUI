@@ -12,7 +12,7 @@ export class TokenService {
 		const conf = await this._config
 
 		try {
-			if (this._currentToken) {
+			if (this._currentToken && this._currentToken.accountId == account.id) {
 				// Check if token is old
 				if (
 					this._currentToken.expirationDate - conf.tokenMinTimeLeft <

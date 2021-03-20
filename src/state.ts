@@ -1,7 +1,7 @@
 import {Account} from './entities/account'
-import type {LoginData} from './entities/loginData'
+import type {LoginData} from './events/loginData'
 import type {Token} from './entities/token'
-import {getLoginDataCache, getTokenService} from './provider'
+import {getConfig, getLoginDataCache, getTokenService} from './provider'
 
 // This file has all state logic and caching
 
@@ -9,24 +9,37 @@ const defaultCallback = () => {
 	throw Error('No default callback set')
 }
 
-class State {
-	private _tokenService = getTokenService()
-	private _loginDataCache = getLoginDataCache()
-
+export class State {
+	// Getting and setting loginData
 	getLoginData(): Promise<LoginData | null> {
-		return this._loginDataCache.then(ldc => {
-			return ldc.getLoginData()
+		return Promise.all([
+			getLoginDataCache(),
+			getConfig()
+		]).then(([ldc, config]) => {
+			const ld = ldc.getLoginData()
+
+			if (ld) {
+				config.version = ld.apiVersion
+			}
+
+			return ld
 		})
 	}
-	setLoginData(loginData: LoginData) {
-		this._loginDataCache.then(ldc => {
+	setLoginData(loginData: LoginData): Promise<void> {
+		return Promise.all([
+			getLoginDataCache(),
+			getConfig()
+		]).then(([ldc, config]) => {
 			ldc.setLoginData(loginData)
+			ldc.useLocalStorage = loginData.cache
+			config.version = `/${loginData.apiVersion}`
 		})
 	}
+	// Get function to get Promise of Token
 	getTokenCallback(): () => Promise<Token> {
 		return async (): Promise<Token> => {
-			const ts = await this._tokenService
-			const ldc = await this._loginDataCache
+			const ts = await getTokenService()
+			const ldc = await getLoginDataCache()
 
 			const data = ldc.getLoginData()!!
 			const account = new Account(null, data.username, data.password, null)
@@ -35,5 +48,3 @@ class State {
 		}
 	}
 }
-
-export const state = new State()

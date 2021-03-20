@@ -1,13 +1,16 @@
 <!-- Login component, the component only dispatches events, it does not have any logic. -->
 <script lang="ts">
 	import {createEventDispatcher} from 'svelte'
-	import {LoginData} from '../entities/loginData'
+	import {LoginData} from '../events/loginData'
 
 	const dispatch = createEventDispatcher<{login: LoginData}>()
 
-	export let ed: LoginData = new LoginData('', '', '', true, 'v3')
+	let ed: LoginData = new LoginData('', '', '', true, 'v3')
 	const formSubmit = (e: Event) => {
 		dispatch('login', ed)
+	}
+	export const setLoginData = (ld: LoginData) => {
+		ed = ld
 	}
 </script>
 
@@ -27,8 +30,8 @@
 			/>
 		</div>
 		<div class="versContainer">
-			<label for="apiversion">Api version:</label>
-			<select bind:value={ed.apiversion} name="apiversion" id="apiversion">
+			<label for="apiVersion">Api version:</label>
+			<select bind:value={ed.apiVersion} name="apiVersion" id="apiVerison">
 				<option value="v2">v2</option>
 				<option default value="v3">v3</option>
 			</select>

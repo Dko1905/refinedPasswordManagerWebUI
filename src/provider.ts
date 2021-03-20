@@ -5,6 +5,7 @@ import type {CredentialRepository} from './repository/credentialRepository'
 import {CredentialRepository2Impl} from './repository/credentialRepository2Impl'
 import {LoginDataCache} from './repository/loginDataCache'
 import {TokenService} from './service/tokenService'
+import {State} from './state'
 
 /* Simple dependency resolver that only uses singletons **and** supports circular references. */
 const cache: Map<string, Promise<unknown>> = new Map()
@@ -41,4 +42,7 @@ export function getConfig(): Promise<Config> {
 }
 export function getTokenService(): Promise<TokenService> {
 	return chelper(TokenService)
+}
+export function getState(): Promise<State> {
+	return chelper(State)
 }
