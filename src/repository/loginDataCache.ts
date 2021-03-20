@@ -1,7 +1,7 @@
-import type {Account} from '../entities/account'
+import type {LoginData} from '../entities/loginData'
 
-export class LoginCacheRepository {
-	private _account: Account | null = null
+export class LoginDataCache {
+	private _loginData: LoginData | null = null
 	private _localStorage: Storage | null
 	private _useLocalStorage: boolean = false
 
@@ -21,19 +21,19 @@ export class LoginCacheRepository {
 		return this._useLocalStorage
 	}
 
-	public getAccount(): Account | null {
-		if (this._account) {
-			return this._account
+	public getLoginData(): LoginData | null {
+		if (this._loginData) {
+			return this._loginData
 		} else if (this._localStorage) {
-			const str = this._localStorage.getItem('loginInfo')
+			const str = this._localStorage.getItem('loginData')
 			if (str) {
 				return JSON.parse(str)
 			}
 		}
 		return null
 	}
-	public setAccount(account: Account) {
-		this._account = account
-		this._localStorage?.setItem('loginInfo', JSON.stringify(account))
+	public setLoginData(loginData: LoginData) {
+		this._loginData = loginData
+		this._localStorage?.setItem('loginData', JSON.stringify(loginData))
 	}
 }
