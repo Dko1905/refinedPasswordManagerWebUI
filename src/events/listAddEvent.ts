@@ -1,4 +1,5 @@
+import type {Credential} from '../entities/credential'
 
 export class ListAddEvent {
-	public name = ListAddEvent.name
+	constructor(public readonly credential: Credential) {}
 }

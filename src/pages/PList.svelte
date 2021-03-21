@@ -8,7 +8,8 @@
 	const ed = createEventDispatcher<{add: ListAddEvent}>()
 
 	const eventFunc = (credential: Credential) => {
-		ed('add', new ListAddEvent())
+		console.log('CLICK')
+		ed('add', new ListAddEvent(credential))
 	}
 </script>
 
